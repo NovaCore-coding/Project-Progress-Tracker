@@ -648,8 +648,8 @@ function getTaskScore(t, searchStr) {
 }
 
 (() => {
-  const STORAGE_KEY = 'personal_tasks_2026_final_fix';
-  const SETTINGS_KEY = 'personal_settings_2026_final_fix';
+  const STORAGE_KEY = 'personal_tasks_2026_v2';
+  const SETTINGS_KEY = 'personal_settings_2026_v2';
   const $ = s => document.querySelector(s);
   const $$ = s => document.querySelectorAll(s);
   
@@ -695,55 +695,10 @@ function getTaskScore(t, searchStr) {
   }
   function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(appSettings)); updateDatalists(); renderSettings(); renderAll(); }
 
-  function generateMockData(count = 150) {
-    const arr = [];
-    const projects = ['Học Tiếng Nhật (JLPT)', 'Đầu tư Tài chính 2026', 'Nâng cấp Website cá nhân', 'Đọc sách Tôn giáo', 'Setup Homelab', 'Du lịch cuối năm'];
-    const priorities = ['Low', 'Medium', 'High', 'Critical'];
-    const statuses = ['Todo', 'Doing', 'Done'];
-    const verbs = ['Nghiên cứu', 'Thanh toán', 'Review', 'Mua', 'Code', 'Viết bài', 'Lên kế hoạch', 'Tập luyện'];
-    const nouns = ['Khoá học', 'Thiết bị', 'Blog', 'Bảo hiểm', 'Vé máy bay', 'Giáo trình'];
-    const rand = (a) => a[Math.floor(Math.random() * a.length)];
-    const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-    const randDate = (daysOffsetMin, daysOffsetMax) => { const d = new Date(); d.setDate(d.getDate() + randInt(daysOffsetMin, daysOffsetMax)); return d.toISOString(); };
-
-    for (let i = 0; i < count; i++) {
-      const status = rand(statuses);
-      const createdAt = randDate(-60, -20); 
-      const updatedAt = randDate(-19, 0);   
-      const deadline = randDate(-15, 30);   
-
-      let archived = false; let archivedAt = null; let commitNote = '';
-      if (status === 'Done') {
-        if (Math.random() > 0.3) {
-          archived = true; archivedAt = updatedAt;
-          commitNote = 'Đã hoàn thành đúng hạn. Cảm thấy rất hài lòng với kết quả đạt được.';
-        }
-      }
-
-      const subtasks = [];
-      const subCount = randInt(1, 4);
-      for(let j = 0; j < subCount; j++) {
-          let done = false;
-          if(status === 'Done') done = true; 
-          else if(status === 'Doing') done = Math.random() > 0.5; 
-          subtasks.push({ id: uid(), text: `Bước nhỏ ${j+1}`, note: Math.random() > 0.6 ? 'Lưu ý phần này' : '', deadline: Math.random() > 0.5 ? randDate(-5, 15).split('T')[0] : '', done: done });
-      }
-
-      arr.push({
-        id: uid(), title: `${rand(verbs)} ${rand(nouns)}`, description: `Mục tiêu cần hoàn thành...`,
-        project: rand(projects), group: rand(appSettings.groups), assignee: rand(appSettings.assignees), priority: rand(priorities),
-        status: status, deadline: deadline.split('T')[0], subtasks: subtasks,
-        logs: [{ id: uid(), text: 'Bắt đầu theo dõi', date: createdAt }],
-        createdAt: createdAt, updatedAt: updatedAt, archived: archived, archivedAt: archivedAt, commitNote: commitNote
-      });
-    }
-    return arr;
-  }
-
   function loadData() { 
     loadSettings();
-    try { const raw = localStorage.getItem(STORAGE_KEY); tasks = raw ? JSON.parse(raw) : generateMockData(150); } 
-    catch { tasks = generateMockData(150); } 
+    try { const raw = localStorage.getItem(STORAGE_KEY); tasks = raw ? JSON.parse(raw) : []; } 
+    catch { tasks = []; } 
     calcData(); 
   }
   function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks)); }
