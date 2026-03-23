@@ -9,21 +9,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    /* SHADCN / LINEAR DARK THEME - DYNAMIC VARIABLES (FULL SYSTEM TINT) */
+    /* SHADCN / LINEAR DARK THEME - DYNAMIC VARIABLES */
     :root {
       --background: #09090b; 
       --foreground: #fafafa; 
       --card: #09090b;
+      
       --primary: #fafafa;
       --primary-foreground: #18181b; 
+      --ring: #d4d4d8;
+      
       --secondary: #27272a; 
       --muted: #27272a;
       --muted-foreground: #a1a1aa; 
       --accent: #27272a;
       --destructive: #7f1d1d; 
       --border: #27272a;
-      --ring: #d4d4d8;
       --radius: 8px; 
       --font-sans: 'Inter', system-ui, sans-serif;
     }
@@ -39,7 +42,7 @@
     button, input, select, textarea { font: inherit; color: inherit; outline: none; }
     input, select, textarea {
       background-color: var(--background); border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px);
-      padding: 8px 12px; transition: 0.2s; font-size: 14px; color: var(--foreground);
+      padding: 8px 12px; transition: border-color 0.2s, box-shadow 0.2s; font-size: 14px; color: var(--foreground);
     }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
     select { 
@@ -53,31 +56,34 @@
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap; border-radius: calc(var(--radius) - 2px); font-weight: 500; padding: 8px 16px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
     .btn-primary { background: var(--primary); color: var(--primary-foreground); }
     .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn-outline { border-color: var(--border); background: var(--background); color: var(--foreground); }
-    .btn-outline:hover { background: var(--secondary); }
+    .btn-outline { border-color: var(--border); background: transparent; color: var(--foreground); }
+    .btn-outline:hover { background: var(--accent); }
     .btn-ghost { background: transparent; color: var(--foreground); }
-    .btn-ghost:hover { background: var(--secondary); }
+    .btn-ghost:hover { background: var(--accent); }
     .btn-destructive { background: var(--destructive); color: var(--foreground); }
-    .btn-destructive:hover { opacity: 0.8; }
+    .btn-destructive:hover { background: #991b1b; }
     .btn-success { background: rgba(34,197,94,0.15); color: #86efac; border-color: rgba(34,197,94,0.3); }
     .btn-success:hover { background: rgba(34,197,94,0.25); }
 
-    /* LAYOUT */
+    /* LAYOUT - CĂN CHỈNH CHIỀU NGANG ĐỒNG ĐỀU */
     .app-grid { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
-    .sidebar { border-right: 1px solid var(--border); background: var(--card); display: flex; flex-direction: column; padding: 24px 16px; position: sticky; top: 0; height: 100vh; overflow-y: auto; transition: 0.3s ease; }
-    .brand { font-size: 16px; font-weight: 600; padding: 0 12px 24px; display: flex; align-items: center; gap: 8px; color: var(--foreground); }
+    .sidebar { border-right: 1px solid var(--border); background: var(--card); display: flex; flex-direction: column; padding: 32px 16px 24px; position: sticky; top: 0; height: 100vh; overflow-y: auto; transition: 0.3s ease; }
+    .brand { font-size: 18px; font-weight: 700; padding: 0 12px; margin-bottom: 36px; display: flex; align-items: center; gap: 10px; color: var(--foreground); letter-spacing: -0.02em; line-height: 1; }
+    
     .nav { display: flex; flex-direction: column; gap: 4px; }
     .nav-item { padding: 8px 12px; border-radius: calc(var(--radius) - 2px); color: var(--muted-foreground); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
     .nav-item:hover, .nav-item.active { color: var(--foreground); background: var(--secondary); font-weight: 600; }
+    .nav-item i { width: 18px; height: 18px; }
     .nav-divider { height: 1px; background: var(--border); margin: 12px 0; }
 
     /* MAIN & HEADER */
     .main { padding: 32px 48px; min-width: 0; overflow-x: hidden; }
-    .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
-    .header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
-    .header p { color: var(--muted-foreground); margin-top: 4px; font-size: 14px; }
-    .header-actions { display: flex; align-items: center; gap: 20px; }
-    .system-clock { font-size: 13px; font-weight: 500; color: var(--muted-foreground); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 8px; background: var(--secondary); padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 36px; }
+    .header-title-wrap { display: flex; flex-direction: column; justify-content: center; }
+    .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; margin: 0; line-height: 1; }
+    .header p { color: var(--muted-foreground); margin: 8px 0 0 0; font-size: 14px; line-height: 1; }
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .system-clock { font-size: 13px; font-weight: 500; color: var(--muted-foreground); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 8px; background: var(--background); padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
     .view { display: none; animation: fadeIn 0.2s ease; }
     .view.active { display: block; }
@@ -91,6 +97,7 @@
     .kpi-title { font-size: 13px; font-weight: 500; color: var(--muted-foreground); margin-bottom: 8px; }
     .kpi-value { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--primary); }
 
+    /* TABLES & TOOLBARS */
     .toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
     .toolbar input { width: 280px; }
     .toolbar select { min-width: 170px; width: auto; }
@@ -104,6 +111,7 @@
     .cell-title { font-weight: 500; font-size: 14px; color: var(--foreground); margin-bottom: 2px; }
     .cell-desc { color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; font-size: 12px; }
 
+    /* PROGRESS & BADGES */
     .progress-track { height: 6px; background: var(--secondary); border-radius: 999px; overflow: hidden; margin-bottom: 4px; width: 100%; }
     .progress-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; background: var(--primary); }
     
@@ -120,6 +128,7 @@
     .h-warn { border-color: rgba(234,179,8,0.3); color: #fde047; } .h-warn::before { background: #eab308; }
     .h-danger { border-color: rgba(239,68,68,0.3); color: #fca5a5; } .h-danger::before { background: #ef4444; }
 
+    /* EXPANDABLE ROW & TABS */
     .row-expandable { cursor: pointer; transition: background 0.2s; }
     .row-expandable:hover { background: var(--secondary); }
     .chevron-icon { transition: transform 0.3s ease; }
@@ -131,13 +140,15 @@
     .sub-table th { background: var(--secondary); padding: 10px 16px; font-size: 12px; border-bottom: 1px solid var(--border); position: static; box-shadow: none; color: var(--foreground); }
     .sub-table td { padding: 10px 16px; font-size: 13px; border-bottom: 1px solid var(--border); }
 
-    mark.highlight-search { background-color: var(--primary); color: var(--primary-foreground); padding: 0 4px; border-radius: 2px; font-weight: 600; box-shadow: 0 0 10px var(--primary); }
+    /* HIGHLIGHT SEARCH */
+    mark.highlight-search { background-color: var(--primary); color: var(--primary-foreground); padding: 0 4px; border-radius: 2px; font-weight: 600; box-shadow: 0 0 8px var(--primary); }
 
     .tabs-list { display: inline-flex; align-items: center; background: var(--secondary); padding: 4px; border-radius: var(--radius); gap: 2px; }
     .tab-trigger { border: none; background: transparent; padding: 6px 16px; border-radius: calc(var(--radius) - 4px); font-size: 13px; font-weight: 500; color: var(--muted-foreground); cursor: pointer; transition: 0.2s; }
     .tab-trigger:hover { color: var(--foreground); }
     .tab-trigger.active { background: var(--background); color: var(--foreground); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 
+    /* GOOGLE TASKS STYLE CHECKLIST */
     .list-container { border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); padding: 12px; background: var(--card); display: flex; flex-direction: column; gap: 12px; }
     .gtask-item { display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
     .gtask-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -153,6 +164,7 @@
     .gtask-del { padding: 4px; border-radius: 4px; background: transparent; border: none; color: var(--muted-foreground); cursor: pointer; height: fit-content; margin-top: 2px; }
     .gtask-del:hover { background: var(--destructive); color: var(--foreground); }
 
+    /* OVERLAYS, DRAWER & MODALS */
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: 0.2s; z-index: 40; }
     .overlay.active { opacity: 1; pointer-events: auto; }
     .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 640px; max-width: 100vw; background: var(--background); border-left: 1px solid var(--border); transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); z-index: 50; display: flex; flex-direction: column; }
@@ -167,6 +179,7 @@
     .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
     .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--card); border-radius: 0 0 var(--radius) var(--radius); }
 
+    /* ZEN MODE EDITOR */
     .zen-modal { position: fixed; inset: 40px 10%; background: var(--background); border: 1px solid var(--border); border-radius: var(--radius); z-index: 100; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transform: scale(0.98); transition: 0.2s ease; box-shadow: 0 24px 60px rgba(0,0,0,0.8); }
     .zen-modal.active { opacity: 1; pointer-events: auto; transform: scale(1); }
     .form-group { display: flex; flex-direction: column; gap: 8px; }
@@ -179,12 +192,12 @@
     .tb-btn:hover { background: var(--background); color: var(--foreground); }
     .editor-content { padding: 12px; min-height: 120px; outline: none; line-height: 1.6; font-size: 14px; overflow-y: auto; color: var(--foreground); }
     .editor-content[contenteditable]:empty:before { content: attr(data-placeholder); color: var(--muted-foreground); pointer-events: none; display: block; }
-    
     .zen-modal .editor-wrap { border: none; flex: 1; }
     .zen-modal .editor-wrap:focus-within { box-shadow: none; border-color: transparent; }
     .zen-modal .editor-toolbar { padding: 8px 16px; }
     .zen-modal .editor-content { padding: 32px 10%; font-size: 16px; line-height: 1.8; }
     
+    /* SETTINGS LAYOUT */
     .settings-layout { display: grid; grid-template-columns: 240px 1fr; gap: 32px; align-items: start; }
     .settings-menu { display: flex; flex-direction: column; gap: 8px; }
     .set-menu-item { padding: 10px 16px; border-radius: var(--radius); cursor: pointer; color: var(--muted-foreground); font-weight: 500; font-size: 13px; transition: 0.2s; }
@@ -198,31 +211,43 @@
 </head>
 <body>
 
+  <script>
+    function initSystemClock() {
+      const clockEl = document.getElementById('liveClock');
+      if (!clockEl) return;
+      const update = () => {
+        const now = new Date();
+        const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+        clockEl.textContent = `${days[now.getDay()]}, ${now.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric'})} • ${now.toLocaleTimeString('vi-VN', {hour12: false})}`;
+      };
+      update(); setInterval(update, 1000);
+    }
+  </script>
+
   <div class="app-grid">
     <aside class="sidebar">
       <div class="brand">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        Workgrid Cá Nhân
+        <i data-lucide="zap" style="color: var(--primary);"></i>
+        Trackify Cá Nhân
       </div>
       <nav class="nav" style="flex: 1;">
-        <div class="nav-item active" data-target="dashboard">Tổng quan</div>
-        <div class="nav-item" data-target="workbench">Lưới Công Việc</div>
-        <div class="nav-item" data-target="analytics">Báo cáo (Đang làm)</div>
+        <div class="nav-item active" data-target="dashboard"><i data-lucide="layout-dashboard"></i> Tổng quan</div>
+        <div class="nav-item" data-target="workbench"><i data-lucide="kanban-square"></i> Lưới Công Việc</div>
+        <div class="nav-item" data-target="analytics"><i data-lucide="pie-chart"></i> Báo cáo</div>
         <div class="nav-divider"></div>
-        <div class="nav-item" data-target="history">Lịch sử (Đã lưu trữ)</div>
+        <div class="nav-item" data-target="history"><i data-lucide="archive"></i> Kho lưu trữ</div>
       </nav>
       <nav class="nav">
         <div class="nav-divider"></div>
         <div class="nav-item" data-target="settings">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          Cài đặt hệ thống
+          <i data-lucide="settings"></i> Cài đặt hệ thống
         </div>
       </nav>
     </aside>
 
     <main class="main">
       <header class="header">
-        <div>
+        <div class="header-title-wrap">
           <h1 id="pageTitle">Tổng quan</h1>
           <p id="pageDesc">Kiểm soát tiến độ mục tiêu cá nhân.</p>
         </div>
@@ -230,6 +255,7 @@
           <div class="system-clock">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             <span id="liveClock">Đang tải...</span>
+            <script>initSystemClock();</script>
           </div>
           <button class="btn btn-primary" onclick="app.openModal()">+ Ghi nhận Công việc</button>
         </div>
@@ -339,6 +365,7 @@
           <div class="settings-menu">
             <div class="set-menu-item active" onclick="app.setSettingTab('general')">Hệ thống (Màu sắc)</div>
             <div class="set-menu-item" onclick="app.setSettingTab('data')">Dữ liệu phân loại</div>
+            <div class="set-menu-item" onclick="app.setSettingTab('backup')">Sao lưu & Khôi phục</div>
           </div>
 
           <div class="settings-content">
@@ -350,14 +377,14 @@
                     <label class="label">Màu chủ đạo (System Theme Color)</label>
                     <select id="themeColorSelect" onchange="app.changeTheme(this.value)">
                       <option value="zinc">Ghi xám / Đen (Zinc - Mặc định)</option>
-                      <option value="navy">Xanh đại dương thẳm (Navy)</option>
+                      <option value="navy">Xanh dương (Navy)</option>
                       <option value="violet">Tím bóng đêm (Violet)</option>
                       <option value="emerald">Xanh lục bảo (Emerald)</option>
                       <option value="rose">Đỏ hồng (Rose)</option>
                       <option value="amber">Nâu cam (Amber)</option>
                     </select>
                     <div style="font-size:12px; color:var(--muted-foreground); margin-top:8px;">
-                      Theme sẽ thay đổi màu nền, thẻ, viền và các điểm nhấn trên toàn bộ hệ thống.
+                      Theme sẽ thay đổi màu nền, thẻ, viền, checkbox và điểm nhấn tìm kiếm trên toàn hệ thống.
                     </div>
                   </div>
                 </div>
@@ -398,6 +425,25 @@
                 </div>
               </div>
             </div>
+
+            <div id="set-pane-backup" class="set-pane">
+              <div class="card">
+                <div class="card-header">Quản lý cơ sở dữ liệu LocalStorage</div>
+                <div class="card-content" style="display: flex; flex-wrap: wrap; gap: 12px;">
+                  <button class="btn btn-primary" onclick="app.exportData()">
+                    <i data-lucide="download"></i> Xuất dữ liệu (JSON)
+                  </button>
+                  <label class="btn btn-outline" style="cursor: pointer;">
+                    <i data-lucide="upload"></i> Nhập dữ liệu
+                    <input type="file" style="display: none;" accept=".json" onchange="app.importData(event)">
+                  </label>
+                  <button class="btn btn-destructive" style="margin-left: auto;" onclick="app.clearAllData()">
+                    <i data-lucide="trash-2"></i> Xóa toàn bộ dữ liệu
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -424,7 +470,7 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="label">Dự án / Mục tiêu (Nhập tự do)</label><input type="text" id="m_project" list="projectList" placeholder="Gắn với mục tiêu nào?"></div>
+        <div class="form-group"><label class="label">Dự án / Mục tiêu</label><input type="text" id="m_project" list="projectList" placeholder="Gắn với mục tiêu nào?"></div>
         <div class="form-group"><label class="label">Danh mục (Tags)</label><select id="m_group"></select></div>
       </div>
       <div class="form-row">
@@ -552,7 +598,7 @@
   <datalist id="projectList"></datalist>
 
 <script>
-// --- UTILS: LỌC DẤU TIẾNG VIỆT & HIGHLIGHT ---
+// --- UTILS: LỌC DẤU TIẾNG VIỆT, HIGHLIGHT VÀ SCORING TÌM KIẾM ---
 const uid = () => Math.random().toString(36).substr(2, 9);
 const escapeHTML = str => String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const escapeAttr = str => String(str || '').replace(/"/g, '&quot;');
@@ -574,7 +620,6 @@ function highlightMatch(text, keyword) {
   return safeText.replace(regex, '<mark class="highlight-search">$1</mark>');
 }
 
-// HÀM CHẤM ĐIỂM TÌM KIẾM (RELEVANCE SCORING)
 function getTaskScore(t, searchStr) {
   const st = removeAccents(searchStr.toLowerCase().trim());
   if (!st) return 1;
@@ -603,8 +648,8 @@ function getTaskScore(t, searchStr) {
 }
 
 (() => {
-  const STORAGE_KEY = 'personal_tasks_2026';
-  const SETTINGS_KEY = 'personal_settings_2026';
+  const STORAGE_KEY = 'personal_tasks_2026_final_fix';
+  const SETTINGS_KEY = 'personal_settings_2026_final_fix';
   const $ = s => document.querySelector(s);
   const $$ = s => document.querySelectorAll(s);
   
@@ -621,7 +666,7 @@ function getTaskScore(t, searchStr) {
     language: 'vi'
   };
 
-  // FULL SYSTEM TINT (THAY MÁU TOÀN HỆ THỐNG)
+  // FULL SYSTEM TINT (THAY MÁU TOÀN HỆ THỐNG TỪNG PIXEL)
   function applyTheme(themeName) {
     const root = document.documentElement;
     const palettes = {
@@ -744,6 +789,9 @@ function getTaskScore(t, searchStr) {
     if (activeView === 'analytics') renderAnalytics();
     if (activeView === 'history') renderHistory();
     if (activeView === 'settings') renderSettings();
+    
+    // Tái khởi tạo Icon Lucide sau khi render DOM
+    if(window.lucide) lucide.createIcons();
   }
 
   function renderSettings() {
@@ -882,7 +930,7 @@ function getTaskScore(t, searchStr) {
           <tr class="row-details ${expandClass}" id="details-p-${p.replace(/[\s\W]+/g, '-')}">
             <td colspan="6" style="padding: 16px 24px;">
               <div class="sub-table-wrapper" style="margin:0;"><table class="sub-table" style="margin:0;"><thead><tr><th width="35%">Công việc đang chạy</th><th width="15%">Danh mục</th><th width="15%">Bên liên quan</th><th width="15%">Checklist</th><th width="10%">Hạn chót</th><th width="10%">Tiến độ</th></tr></thead>
-              <tbody>${pTasks.map(t=>`<tr><td>${highlightMatch(t.title, stRaw)}</td><td>${highlightMatch(t.group, stRaw)}</td><td>${highlightMatch(t.assignee, stRaw)}</td><td style="font-family:monospace; color:var(--muted-foreground)">${t.checklistText}</td><td style="color:${t.dlState==='overdue'?'#fca5a5':'inherit'}">${formatDate(t.deadline)}</td><td>${t.progress}%</td></tr>`).join('')}</tbody></table></div>
+              <tbody>${pTasks.map(t=>`<tr class="clickable" onclick="app.openDrawer('${t.id}')"><td>${highlightMatch(t.title, stRaw)}</td><td>${highlightMatch(t.group, stRaw)}</td><td>${highlightMatch(t.assignee, stRaw)}</td><td style="font-family:monospace; color:var(--muted-foreground)">${t.checklistText}</td><td style="color:${t.dlState==='overdue'?'#fca5a5':'inherit'}">${formatDate(t.deadline)}</td><td>${t.progress}%</td></tr>`).join('')}</tbody></table></div>
             </td>
           </tr>`;
       });
@@ -907,7 +955,6 @@ function getTaskScore(t, searchStr) {
         const gTasks = activeTasks.filter(t=>t.group===g);
         const gActive = gTasks.length;
         const gOverdue = gTasks.filter(t=>t.dlState==='overdue').length;
-        
         const members = {};
         gTasks.forEach(t => {
           const name = t.assignee || 'Chưa phân loại';
@@ -974,7 +1021,9 @@ function getTaskScore(t, searchStr) {
     },
 
     setSettingTab: (tabId) => {
-      $$('.set-menu-item').forEach(el => el.classList.toggle('active', el.textContent.toLowerCase().includes(tabId==='general'?'hệ thống':'dữ liệu')));
+      $$('.set-menu-item').forEach(el => {
+        el.classList.toggle('active', el.getAttribute('onclick').includes(tabId));
+      });
       $$('.set-pane').forEach(el => el.classList.toggle('active', el.id === `set-pane-${tabId}`));
     },
 
@@ -1083,7 +1132,7 @@ function getTaskScore(t, searchStr) {
       const t = tasks.find(x => x.id === currentId);
       $('#d_logs_list').innerHTML = t.logs && t.logs.length ? t.logs.sort((a,b)=> new Date(b.date)-new Date(a.date)).map(l => `
         <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
-          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-foreground); margin-bottom: 4px;"><span>Ghi nhận</span><span>${formatDateTime(l.date)}</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-foreground); margin-bottom: 4px;"><span>Cá nhân</span><span>${formatDateTime(l.date)}</span></div>
           <div style="font-size: 13px; color: var(--foreground);">${escapeHTML(l.text)}</div>
         </div>`).join('') : '<div style="color:var(--muted-foreground); text-align:center; padding: 12px 0;">Chưa có nhật ký.</div>';
     },
@@ -1092,7 +1141,50 @@ function getTaskScore(t, searchStr) {
     toggleRow: (id) => { const detailsRow = document.getElementById(`details-${id}`); const parentRow = detailsRow.previousElementSibling; detailsRow.classList.toggle('open'); parentRow.classList.toggle('open'); },
     
     addSetting: (type, inputId) => { const val = $(`#${inputId}`).value.trim(); if(val && !appSettings[type].includes(val)) { appSettings[type].push(val); $(`#${inputId}`).value = ''; saveSettings(); } },
-    delSetting: (type, val) => { if(confirm(`Bạn có chắc chắn xóa "${val}" khỏi cài đặt?`)) { appSettings[type] = appSettings[type].filter(item => item !== val); saveSettings(); } }
+    delSetting: (type, val) => { if(confirm(`Bạn có chắc chắn xóa "${val}" khỏi cài đặt?`)) { appSettings[type] = appSettings[type].filter(item => item !== val); saveSettings(); } },
+
+    // --- XỬ LÝ DỮ LIỆU BACKUP ---
+    exportData: () => {
+      const dataStr = JSON.stringify({ tasks, appSettings });
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      const exportFileDefaultName = `workgrid_backup_${new Date().toISOString().split('T')[0]}.json`;
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    },
+    importData: (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.tasks && imported.appSettings) {
+            tasks = imported.tasks;
+            appSettings = imported.appSettings;
+            saveData(); saveSettings(); renderAll();
+            alert('Khôi phục dữ liệu thành công!');
+          } else {
+            alert('File JSON không đúng định dạng của hệ thống.');
+          }
+        } catch (error) {
+          alert('Lỗi đọc file: ' + error.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = ''; // Reset input
+    },
+    clearAllData: () => {
+      if(confirm('CẢNH BÁO: Hành động này sẽ xóa sạch toàn bộ công việc và cài đặt của bạn. Không thể hoàn tác. Bạn có chắc chắn?')) {
+        const doubleCheck = prompt('Gõ chữ "XOA" để xác nhận:');
+        if (doubleCheck === 'XOA') {
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(SETTINGS_KEY);
+          location.reload();
+        }
+      }
+    }
   };
 
   // Event Listeners
