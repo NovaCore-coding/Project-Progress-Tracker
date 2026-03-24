@@ -106,8 +106,10 @@
     
     .table-wrapper { border: 1px solid var(--border); border-radius: var(--radius); overflow-y: auto; overflow-x: auto; max-height: calc(100vh - 260px); position: relative; background: var(--card); }
     table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; min-width: 1000px; }
-    th { position: sticky; top: 0; background: var(--background); font-weight: 600; color: var(--muted-foreground); padding: 14px 16px; border-bottom: 1px solid var(--border); z-index: 10; white-space: nowrap; box-shadow: 0 1px 0 var(--border); }
-    td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    
+    /* PADDING CHO TH VÀ TD ĐÃ ĐƯỢC CHỈNH THÀNH 14px 24px CHO RỘNG RÃI */
+    th { position: sticky; top: 0; background: var(--background); font-weight: 600; color: var(--muted-foreground); padding: 14px 24px; border-bottom: 1px solid var(--border); z-index: 10; white-space: nowrap; box-shadow: 0 1px 0 var(--border); }
+    td { padding: 14px 24px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tr.clickable:hover td { background: var(--secondary); }
     .cell-title { font-weight: 500; font-size: 14px; color: var(--foreground); margin-bottom: 2px; }
@@ -298,14 +300,14 @@
           <table>
             <thead>
               <tr>
-                <th width="24%">Tên Công việc</th>
-                <th width="12%">Mục tiêu / Dự án</th>
-                <th width="10%">Danh mục</th>
+                <th width="28%">Tên Công việc</th>
+                <th width="14%">Mục tiêu / Dự án</th>
+                <th width="12%">Danh mục</th>
                 <th width="8%">Ưu tiên</th>
                 <th width="10%">Hạn chót</th>
-                <th width="12%">Cập nhật</th>
-                <th width="10%">Tiến độ</th>
-                <th width="14%" style="text-align: right;">Thao tác</th>
+                <th width="10%">Cập nhật</th>
+                <th width="8%">Tiến độ</th>
+                <th width="10%" style="text-align: right;">Thao tác</th>
               </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -349,12 +351,12 @@
           <table>
             <thead>
               <tr>
-                <th width="20%">Công việc hoàn thành</th>
-                <th width="12%">Dự án</th>
+                <th width="24%">Công việc hoàn thành</th>
+                <th width="14%">Dự án</th>
                 <th width="12%">Danh mục</th>
                 <th width="12%">Bên liên quan</th>
                 <th width="12%">Ngày lưu trữ</th>
-                <th width="32%">Ghi chú Tổng kết / Bài học</th>
+                <th width="26%">Ghi chú Tổng kết / Bài học</th>
               </tr>
             </thead>
             <tbody id="historyBody"></tbody>
@@ -834,9 +836,11 @@ function getTaskScore(t, searchStr) {
           <div style="font-size:11px; color:var(--muted-foreground)">${upDateStr}</div>
         </td>
         <td><div style="display:flex; align-items:center; gap:8px;"><div class="progress-track" style="margin:0; height:4px; width:50px; background:var(--border);"><div class="progress-fill" style="width:${t.progress}%;"></div></div><span style="font-size:11px; color:var(--muted-foreground);">${t.progress}%</span></div></td>
-        <td style="text-align:right;">
-          ${isDone ? `<button class="btn btn-success" style="padding:4px 10px; font-size:12px; margin-right:4px;" onclick="event.stopPropagation(); app.triggerArchive('${t.id}')">Lưu trữ</button>` : ''}
-          <button class="btn btn-outline" style="padding:4px 10px; font-size:12px;" onclick="event.stopPropagation(); app.openDrawer('${t.id}')">Sửa</button>
+        <td>
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            ${isDone ? `<button class="btn btn-success" style="padding:4px 10px; font-size:12px;" onclick="event.stopPropagation(); app.triggerArchive('${t.id}')">Lưu trữ</button>` : ''}
+            <button class="btn btn-outline" style="padding:4px 10px; font-size:12px;" onclick="event.stopPropagation(); app.openDrawer('${t.id}')">Sửa</button>
+          </div>
         </td>
       </tr>
     `}).join('') : `<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--muted-foreground)">Không tìm thấy dữ liệu phù hợp.</td></tr>`;
