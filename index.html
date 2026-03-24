@@ -45,6 +45,8 @@
       padding: 8px 12px; transition: border-color 0.2s, box-shadow 0.2s; font-size: 14px; color: var(--foreground);
     }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+    input:disabled, select:disabled, textarea:disabled { opacity: 0.5; cursor: not-allowed; }
+    
     select { 
       appearance: none; 
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); 
@@ -191,7 +193,7 @@
     .tb-btn { background: transparent; border: none; border-radius: 4px; padding: 6px 10px; color: var(--muted-foreground); font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
     .tb-btn:hover { background: var(--background); color: var(--foreground); }
     .editor-content { padding: 12px; min-height: 120px; outline: none; line-height: 1.6; font-size: 14px; overflow-y: auto; color: var(--foreground); }
-    .editor-content[contenteditable]:empty:before { content: attr(data-placeholder); color: var(--muted-foreground); pointer-events: none; display: block; }
+    .editor-content[contenteditable=true]:empty:before { content: attr(data-placeholder); color: var(--muted-foreground); pointer-events: none; display: block; }
     .zen-modal .editor-wrap { border: none; flex: 1; }
     .zen-modal .editor-wrap:focus-within { box-shadow: none; border-color: transparent; }
     .zen-modal .editor-toolbar { padding: 8px 16px; }
@@ -298,10 +300,10 @@
               <tr>
                 <th width="24%">Tên Công việc</th>
                 <th width="12%">Mục tiêu / Dự án</th>
-                <th width="12%">Danh mục</th>
-                <th width="10%">Bên liên quan</th>
+                <th width="10%">Danh mục</th>
                 <th width="8%">Ưu tiên</th>
                 <th width="10%">Hạn chót</th>
+                <th width="12%">Cập nhật</th>
                 <th width="10%">Tiến độ</th>
                 <th width="14%" style="text-align: right;">Thao tác</th>
               </tr>
@@ -499,7 +501,7 @@
     
     <div class="drawer-body">
       <div id="drawerArchivedBanner" style="display:none; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-        <div style="color: #fde047; font-weight: 600; margin-bottom: 6px;">🔒 Đã lưu trữ thành công</div>
+        <div style="color: #fde047; font-weight: 600; margin-bottom: 6px;">🔒 Đã lưu trữ (Chỉ đọc)</div>
         <div id="drawerCommitNote" style="color: var(--muted-foreground); font-size: 13px; font-style: italic; line-height: 1.5;"></div>
       </div>
 
@@ -507,7 +509,7 @@
       <div class="form-group">
         <label class="label">Mô tả chi tiết</label>
         <div class="editor-wrap">
-          <div class="editor-toolbar">
+          <div class="editor-toolbar" id="d_editor_toolbar">
             <button class="tb-btn" onclick="app.execCmd('bold')"><b>B</b></button>
             <button class="tb-btn" onclick="app.execCmd('italic')"><i>I</i></button>
             <button class="tb-btn highlight" onclick="app.execCmd('backColor', 'var(--primary)')">🖍</button>
@@ -537,7 +539,7 @@
         </label>
         <div class="list-container">
           <div id="d_checklist_list" style="display:flex; flex-direction:column; gap:0;"></div>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px;" id="d_new_check_wrap">
             <input type="text" id="d_new_check" placeholder="Thêm mục tiêu nhỏ..." style="flex:1;">
             <button class="btn btn-outline" onclick="app.addChecklist()">Thêm</button>
           </div>
@@ -548,7 +550,7 @@
         <label class="label">Nhật ký (Logs)</label>
         <div class="list-container">
           <div id="d_logs_list" style="margin-bottom: 12px; max-height: 150px; overflow-y: auto;"></div>
-          <div style="display: flex; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px;">
+          <div style="display: flex; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px;" id="d_new_log_wrap">
             <input type="text" id="d_new_log" placeholder="Cập nhật tiến độ..." style="flex:1;">
             <button class="btn btn-outline" onclick="app.addLog()">Ghi</button>
           </div>
@@ -557,8 +559,8 @@
     </div>
     
     <div class="drawer-footer">
-      <button class="btn btn-destructive" onclick="app.deleteTask()" style="margin-right: auto;">Xóa bỏ</button>
-      <button class="btn btn-outline" onclick="app.closeDrawer()">Hủy</button>
+      <button class="btn btn-destructive" id="btnDeleteTask" onclick="app.deleteTask()" style="margin-right: auto;">Xóa bỏ</button>
+      <button class="btn btn-outline" onclick="app.closeDrawer()">Đóng</button>
       <button class="btn btn-outline" id="btnRestore" style="display:none; border-color: rgba(234, 179, 8, 0.5); color: #fde047;" onclick="app.restoreTask()">Khôi phục</button>
       <button class="btn btn-primary" id="btnUpdateTask" onclick="app.updateTask()">Cập nhật</button>
     </div>
@@ -666,7 +668,6 @@ function getTaskScore(t, searchStr) {
     language: 'vi'
   };
 
-  // FULL SYSTEM TINT (THAY MÁU TOÀN HỆ THỐNG TỪNG PIXEL)
   function applyTheme(themeName) {
     const root = document.documentElement;
     const palettes = {
@@ -744,8 +745,6 @@ function getTaskScore(t, searchStr) {
     if (activeView === 'analytics') renderAnalytics();
     if (activeView === 'history') renderHistory();
     if (activeView === 'settings') renderSettings();
-    
-    // Tái khởi tạo Icon Lucide sau khi render DOM
     if(window.lucide) lucide.createIcons();
   }
 
@@ -819,14 +818,21 @@ function getTaskScore(t, searchStr) {
 
     $('#tableBody').innerHTML = filtered.length ? filtered.map(t => {
       const isDone = t.status === 'Done';
+      const upDate = new Date(t.updatedAt || new Date());
+      const upTimeStr = upDate.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+      const upDateStr = upDate.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric'});
+
       return `
       <tr class="clickable" onclick="app.openDrawer('${t.id}')">
         <td><div class="cell-title">${highlightMatch(t.title, stRaw)}</div><div class="cell-desc">${highlightMatch(stripHTML(t.description||'-'), stRaw)}</div></td>
         <td>${highlightMatch(t.project, stRaw)}</td>
         <td>${highlightMatch(t.group, stRaw)}</td>
-        <td><div style="color:var(--muted-foreground)">${highlightMatch(t.assignee, stRaw)}</div></td>
         <td><span class="${badgeClass('p', t.priority)}">${t.priority}</span></td>
         <td style="color:${t.dlState==='overdue'&&!isDone?'#fca5a5':(t.dlState==='soon'&&!isDone?'#fde047':'inherit')}">${formatDate(t.deadline)}</td>
+        <td>
+          <div style="font-size:12px; color:var(--foreground)">${upTimeStr}</div>
+          <div style="font-size:11px; color:var(--muted-foreground)">${upDateStr}</div>
+        </td>
         <td><div style="display:flex; align-items:center; gap:8px;"><div class="progress-track" style="margin:0; height:4px; width:50px; background:var(--border);"><div class="progress-fill" style="width:${t.progress}%;"></div></div><span style="font-size:11px; color:var(--muted-foreground);">${t.progress}%</span></div></td>
         <td style="text-align:right;">
           ${isDone ? `<button class="btn btn-success" style="padding:4px 10px; font-size:12px; margin-right:4px;" onclick="event.stopPropagation(); app.triggerArchive('${t.id}')">Lưu trữ</button>` : ''}
@@ -1022,19 +1028,45 @@ function getTaskScore(t, searchStr) {
     openDrawer: (id) => {
       const t = tasks.find(x => x.id === id); if(!t) return;
       currentId = id;
-      if(t.archived) {
-        $('#drawerArchivedBanner').style.display = 'block'; $('#drawerCommitNote').textContent = `"${t.commitNote}"`; $('#btnRestore').style.display = 'inline-flex'; $('#d_title_display').textContent = `[Lưu trữ] ${t.title}`;
+      const isArc = !!t.archived;
+
+      // Xử lý Giao diện Đóng Băng
+      if(isArc) {
+        $('#drawerArchivedBanner').style.display = 'block';
+        $('#drawerCommitNote').textContent = `"${t.commitNote}"`;
+        $('#btnRestore').style.display = 'inline-flex';
+        $('#btnUpdateTask').style.display = 'none';
+        $('#btnDeleteTask').style.display = 'none';
+        $('#d_title_display').textContent = `[Lưu trữ] ${t.title}`;
       } else {
-        $('#drawerArchivedBanner').style.display = 'none'; $('#btnRestore').style.display = 'none'; $('#d_title_display').textContent = t.title; 
+        $('#drawerArchivedBanner').style.display = 'none';
+        $('#btnRestore').style.display = 'none';
+        $('#btnUpdateTask').style.display = 'inline-flex';
+        $('#btnDeleteTask').style.display = 'inline-flex';
+        $('#d_title_display').textContent = t.title;
       }
       $('#d_meta_display').textContent = `Cập nhật: ${formatDateTime(t.updatedAt)}`;
-      $('#d_title').value = t.title; $('#d_desc').innerHTML = t.description || ''; $('#d_project').value = t.project || ''; 
       
+      // Điền dữ liệu
+      $('#d_title').value = t.title; $('#d_desc').innerHTML = t.description || ''; $('#d_project').value = t.project || ''; 
       if (!appSettings.groups.includes(t.group)) $('#d_group').insertAdjacentHTML('beforeend', `<option value="${escapeAttr(t.group)}">${escapeHTML(t.group)} (Đã xóa)</option>`);
       if (!appSettings.assignees.includes(t.assignee)) $('#d_assignee').insertAdjacentHTML('beforeend', `<option value="${escapeAttr(t.assignee)}">${escapeHTML(t.assignee)} (Đã xóa)</option>`);
       
       $('#d_group').value = t.group || ''; $('#d_priority').value = t.priority; $('#d_assignee').value = t.assignee || ''; $('#d_deadline').value = t.deadline||'';
-      app.renderChecklist(); app.renderLogs();
+
+      // Khóa Form
+      const controls = ['#d_title', '#d_project', '#d_group', '#d_priority', '#d_assignee', '#d_deadline', '#d_new_check', '#d_new_log'];
+      controls.forEach(sel => {
+        const el = $(sel);
+        if(el) el.disabled = isArc;
+      });
+      $('#d_desc').contentEditable = !isArc;
+      $('#d_editor_toolbar').style.display = isArc ? 'none' : 'flex';
+      $('#d_new_check_wrap').style.display = isArc ? 'none' : 'flex';
+      $('#d_new_log_wrap').style.display = isArc ? 'none' : 'flex';
+
+      app.renderChecklist(isArc); 
+      app.renderLogs();
       $('#mainOverlay').classList.add('active'); $('#editDrawer').classList.add('active');
     },
     closeDrawer: () => { currentId = null; $('#editDrawer').classList.remove('active'); $('#mainOverlay').classList.remove('active'); updateDatalists(); },
@@ -1062,26 +1094,26 @@ function getTaskScore(t, searchStr) {
       $('#commitModal').classList.remove('active'); $('#mainOverlay').classList.remove('active'); taskToArchive = null;
     },
     
-    renderChecklist: () => {
+    renderChecklist: (isArc = false) => {
       const t = tasks.find(x => x.id === currentId); $('#d_progress_text').textContent = `${t.progress}%`;
       $('#d_checklist_list').innerHTML = t.subtasks.map(s => `
         <div class="gtask-item ${s.done ? 'done' : ''}">
-          <input type="checkbox" ${s.done ? 'checked' : ''} onchange="app.toggleCheck('${s.id}', this.checked)">
+          <input type="checkbox" ${s.done ? 'checked' : ''} ${isArc ? 'disabled' : `onchange="app.toggleCheck('${s.id}', this.checked)"`}>
           <div class="gtask-content">
-            <input type="text" class="gtask-title" value="${escapeAttr(s.text)}" onchange="app.editCheck('${s.id}', 'text', this.value)" placeholder="Tên việc con...">
+            <input type="text" class="gtask-title" value="${escapeAttr(s.text)}" ${isArc ? 'disabled' : `onchange="app.editCheck('${s.id}', 'text', this.value)"`} placeholder="Tên việc con...">
             <div class="gtask-meta">
-              <input type="text" class="gtask-note" value="${escapeAttr(s.note || '')}" onchange="app.editCheck('${s.id}', 'note', this.value)" placeholder="Ghi chú thêm...">
-              <input type="date" class="gtask-date" value="${s.deadline || ''}" onchange="app.editCheck('${s.id}', 'deadline', this.value)">
+              <input type="text" class="gtask-note" value="${escapeAttr(s.note || '')}" ${isArc ? 'disabled' : `onchange="app.editCheck('${s.id}', 'note', this.value)"`} placeholder="Ghi chú thêm...">
+              <input type="date" class="gtask-date" value="${s.deadline || ''}" ${isArc ? 'disabled' : `onchange="app.editCheck('${s.id}', 'deadline', this.value)"`}>
             </div>
           </div>
-          <button class="gtask-del" onclick="app.delCheck('${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+          ${isArc ? '' : `<button class="gtask-del" onclick="app.delCheck('${s.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>`}
         </div>
       `).join('');
     },
-    addChecklist: () => { const v = $('#d_new_check').value.trim(); if(!v) return; const t = tasks.find(x => x.id === currentId); t.subtasks.push({id:uid(), text:v, note:'', deadline:'', done:false}); t.updatedAt = new Date().toISOString(); $('#d_new_check').value = ''; calcData(); saveData(); app.renderChecklist(); renderAll(); },
-    toggleCheck: (id, done) => { const t = tasks.find(x => x.id === currentId); t.subtasks.find(s=>s.id===id).done = done; t.updatedAt = new Date().toISOString(); calcData(); saveData(); app.renderChecklist(); renderAll(); },
+    addChecklist: () => { const v = $('#d_new_check').value.trim(); if(!v) return; const t = tasks.find(x => x.id === currentId); t.subtasks.push({id:uid(), text:v, note:'', deadline:'', done:false}); t.updatedAt = new Date().toISOString(); $('#d_new_check').value = ''; calcData(); saveData(); app.renderChecklist(!!t.archived); renderAll(); },
+    toggleCheck: (id, done) => { const t = tasks.find(x => x.id === currentId); t.subtasks.find(s=>s.id===id).done = done; t.updatedAt = new Date().toISOString(); calcData(); saveData(); app.renderChecklist(!!t.archived); renderAll(); },
     editCheck: (id, field, val) => { const t = tasks.find(x => x.id === currentId); t.subtasks.find(s=>s.id===id)[field] = val; t.updatedAt = new Date().toISOString(); saveData(); },
-    delCheck: (id) => { const t = tasks.find(x => x.id === currentId); t.subtasks = t.subtasks.filter(s=>s.id!==id); t.updatedAt = new Date().toISOString(); calcData(); saveData(); app.renderChecklist(); renderAll(); },
+    delCheck: (id) => { const t = tasks.find(x => x.id === currentId); t.subtasks = t.subtasks.filter(s=>s.id!==id); t.updatedAt = new Date().toISOString(); calcData(); saveData(); app.renderChecklist(!!t.archived); renderAll(); },
 
     renderLogs: () => {
       const t = tasks.find(x => x.id === currentId);
